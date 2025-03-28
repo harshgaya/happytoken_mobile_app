@@ -8,7 +8,8 @@ import '../../../../helpers/colors.dart';
 
 class ShopInfo3 extends StatefulWidget {
   final String city;
-  const ShopInfo3({super.key, required this.city});
+  final String pincode;
+  const ShopInfo3({super.key, required this.city, required this.pincode});
 
   @override
   State<ShopInfo3> createState() => _ShopInfo3State();
@@ -20,6 +21,7 @@ class _ShopInfo3State extends State<ShopInfo3> {
   final floorController = TextEditingController();
   final areaController = TextEditingController();
   final cityController = TextEditingController();
+  final pincodeController = TextEditingController();
   final nearbyLandmarkController = TextEditingController();
   final authController = Get.put(AuthenticationController());
 
@@ -66,7 +68,7 @@ class _ShopInfo3State extends State<ShopInfo3> {
                   height: 10,
                 ),
                 const Text(
-                  'Complete restaurant address',
+                  'Complete shop address',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -191,6 +193,37 @@ class _ShopInfo3State extends State<ShopInfo3> {
                   height: 20,
                 ),
                 TextFormField(
+                  readOnly: true,
+                  controller: pincodeController..text = widget.pincode,
+                  decoration: const InputDecoration(
+                    labelText: 'Pincode',
+                    labelStyle: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    filled: true,
+                    fillColor: Color(AppColors.buttonInactiveColor),
+                    hintStyle: TextStyle(
+                      color: Colors.black26,
+                      fontSize: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
                   controller: nearbyLandmarkController,
                   decoration: const InputDecoration(
                     filled: true,
@@ -221,21 +254,25 @@ class _ShopInfo3State extends State<ShopInfo3> {
           ),
         ),
       ),
-      bottomSheet: ButtonNoRadius(
-        function: () {
-          if (formKey.currentState!.validate()) {
-            formKey.currentState!.save();
-            authController.shopNumber.value = shopNoController.text.trim();
-            authController.floor.value = floorController.text.trim();
-            authController.area.value = areaController.text.trim();
-            authController.landmark.value =
-                nearbyLandmarkController.text.trim();
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: ButtonNoRadius(
+          function: () {
+            if (formKey.currentState!.validate()) {
+              formKey.currentState!.save();
+              authController.pincode.value = pincodeController.text.trim();
+              authController.shopNumber.value = shopNoController.text.trim();
+              authController.floor.value = floorController.text.trim();
+              authController.area.value = areaController.text.trim();
+              authController.landmark.value =
+                  nearbyLandmarkController.text.trim();
 
-            Get.to(() => ShopInfo4());
-          }
-        },
-        text: 'Next',
-        active: true,
+              Get.to(() => ShopInfo4());
+            }
+          },
+          text: 'Next',
+          active: true,
+        ),
       ),
     );
   }

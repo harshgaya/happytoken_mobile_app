@@ -20,6 +20,22 @@ class _ShopLoginScreenState extends State<ShopLoginScreen> {
   bool buttonActive = false;
   final mobileNumberController = TextEditingController();
   final authController = Get.put(AuthenticationController());
+  final _key1 = GlobalKey<State<StatefulWidget>>();
+
+  Future<void> ensureVisibleOnTextArea(
+      {required GlobalKey textfieldKey}) async {
+    final keyContext = textfieldKey.currentContext;
+    if (keyContext != null) {
+      await Future.delayed(const Duration(milliseconds: 500)).then(
+        (value) => Scrollable.ensureVisible(
+          keyContext,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.decelerate,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +92,10 @@ class _ShopLoginScreenState extends State<ShopLoginScreen> {
               child: SizedBox(
                 height: 50,
                 child: TextFormField(
+                  key: _key1,
+                  onTap: () {
+                    ensureVisibleOnTextArea(textfieldKey: _key1);
+                  },
                   controller: mobileNumberController,
                   keyboardType: TextInputType.number,
                   maxLength: 10,
@@ -139,15 +159,17 @@ class _ShopLoginScreenState extends State<ShopLoginScreen> {
                 Get.offAll(() => const LoginScreen());
               },
               child: const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '  User Login>>',
-                  style: TextStyle(
-                      color: Color(
-                    AppColors.appMainColor,
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    TextSpan(text: '   Are you a user?', children: [
+                      TextSpan(
+                        text: ' Login here',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ]),
                   )),
-                ),
-              ),
             ),
             const SizedBox(
               height: 80,
@@ -159,7 +181,7 @@ class _ShopLoginScreenState extends State<ShopLoginScreen> {
           ? Utils.showLoader()
           : Padding(
               padding: const EdgeInsets.only(
-                bottom: 10,
+                bottom: 30,
               ),
               child: ButtonNoRadius(
                 function: () async {

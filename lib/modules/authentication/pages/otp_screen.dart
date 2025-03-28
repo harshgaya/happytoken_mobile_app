@@ -28,6 +28,21 @@ class _OtpScreenState extends State<OtpScreen> {
   final mobileNumberController = TextEditingController();
   final authController = Get.put(AuthenticationController());
   String? otp;
+  final _key1 = GlobalKey<State<StatefulWidget>>();
+
+  Future<void> ensureVisibleOnTextArea(
+      {required GlobalKey textfieldKey}) async {
+    final keyContext = textfieldKey.currentContext;
+    if (keyContext != null) {
+      await Future.delayed(const Duration(milliseconds: 500)).then(
+        (value) => Scrollable.ensureVisible(
+          keyContext,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.decelerate,
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -100,7 +115,10 @@ class _OtpScreenState extends State<OtpScreen> {
                           ),
                         ),
                         Text(
-                          widget.name,
+                          (widget.name != null && widget.name!.isNotEmpty)
+                              ? widget.name![0].toUpperCase() +
+                                  widget.name!.substring(1)
+                              : "Unknown",
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Color(AppColors.appMainColor),
@@ -145,6 +163,10 @@ class _OtpScreenState extends State<OtpScreen> {
                     child: SizedBox(
                       height: 50,
                       child: Pinput(
+                        key: _key1,
+                        onTap: () {
+                          ensureVisibleOnTextArea(textfieldKey: _key1);
+                        },
                         length: 6,
                         defaultPinTheme: PinTheme(
                           height: 45,
@@ -221,7 +243,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ? Utils.showLoader()
               : Padding(
                   padding: const EdgeInsets.only(
-                    bottom: 10,
+                    bottom: 30,
                   ),
                   child: ButtonNoRadius(
                     function: () async {

@@ -38,8 +38,12 @@ class ShopData {
   String city;
   String state;
   String landmark;
+  dynamic discount;
+  dynamic cashback;
+  Map<String, dynamic>? shopTimings;
   ShopData({
     required this.id,
+    this.shopTimings,
     required this.shopName,
     required this.mobileNumber,
     required this.shopImage,
@@ -48,6 +52,8 @@ class ShopData {
     required this.state,
     required this.city,
     required this.status,
+    required this.cashback,
+    required this.discount,
     required this.area,
     required this.floor,
     required this.longitude,
@@ -66,9 +72,12 @@ class ShopData {
   factory ShopData.fromJson({required Map<String, dynamic> json}) => ShopData(
         id: json['_id'],
         shopName: json['shop_name'],
+        shopTimings: json['shop_timings'] ?? {},
         mobileNumber: json['mobile_number'],
         shopImage: json['shop_image'],
         categoryName: json['category_name'],
+        discount: json['discount'],
+        cashback: json['cashback'],
         landmark: json['shop_address']['landmark'] ?? '',
         state: json['shop_address']['state'] ?? '',
         city: json['shop_address']['city'] ?? '',

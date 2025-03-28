@@ -10,6 +10,7 @@ import 'exceptions.dart';
 class NetworkApiServices extends BaseApiServices {
   @override
   Future<dynamic> getApi(String url) async {
+    print('url $url');
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     try {
       try {
@@ -21,12 +22,6 @@ class NetworkApiServices extends BaseApiServices {
           "Authorization":
               'Bearer ${sharedPreferences.getString(SharedPreferenceKey.jwtToken) ?? ''}'
         }).timeout(const Duration(seconds: 250));
-
-        print('------URL-------');
-        print("GETURL ${response.request?.url}");
-        print(response.statusCode);
-        print('------response-------');
-        print("GETResponse  ${response.body}");
 
         return returnResponse(response);
       } on SocketException {
@@ -56,11 +51,7 @@ class NetworkApiServices extends BaseApiServices {
           "Authorization":
               'Bearer ${sharedPreferences.getString(SharedPreferenceKey.jwtToken)}'
         }).timeout(const Duration(seconds: 250));
-        print('------URL-------');
-        print("PostURL ${response.request?.url}");
-        print(response.statusCode);
-        print('------response-------');
-        print("PostResponse  ${response.body}");
+
         return returnResponse(response);
       } on SocketException {
         throw InternetException();

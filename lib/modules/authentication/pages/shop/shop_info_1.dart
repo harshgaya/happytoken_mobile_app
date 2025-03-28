@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:happy_tokens/helpers/utils.dart';
 import 'package:happy_tokens/modules/authentication/authentication_controller.dart';
 import 'package:happy_tokens/modules/authentication/pages/shop/shop_info_2.dart';
+import 'package:happy_tokens/modules/authentication/pages/shop/store_timings.dart';
 import 'package:happy_tokens/modules/user/models/category_model.dart';
 import 'package:happy_tokens/widgets/button_no_radius.dart';
 
@@ -19,6 +21,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
   final nameController = TextEditingController();
   final ownerName = TextEditingController();
   final ownerEmail = TextEditingController();
+  final tradeName = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final authController = Get.put(AuthenticationController());
   String? _selectedValue;
@@ -70,9 +73,6 @@ class _ShopInfo1State extends State<ShopInfo1> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 10,
-                ),
                 const Text(
                   'Shop Details',
                   style: TextStyle(
@@ -84,11 +84,44 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   'Customer will see this on Happy Token App',
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w200,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => StoreHoursScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16.0, horizontal: 24.0),
+                        textStyle: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                        backgroundColor: const Color(AppColors.appMainColor),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        elevation: 5,
+                      ),
+                      icon: const Icon(Icons.access_time,
+                          size: 24, color: Colors.white),
+                      label: const Text(
+                        'Enter Store Timings',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
                 const Text(
                   'Shop Name',
@@ -98,7 +131,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 3,
                 ),
                 TextFormField(
                   controller: nameController,
@@ -133,6 +166,48 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   height: 20,
                 ),
                 const Text(
+                  'Trade Name',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                TextFormField(
+                  controller: tradeName,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter trade name';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Color(AppColors.buttonInactiveColor),
+                    hintText: 'Enter your trade name',
+                    hintStyle: TextStyle(
+                      color: Colors.black26,
+                      fontSize: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
                   'Select Category',
                   style: TextStyle(
                     fontSize: 12,
@@ -140,7 +215,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 3,
                 ),
                 Obx(
                   () => DropdownButtonFormField<String>(
@@ -200,7 +275,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 3,
                 ),
                 TextFormField(
                   controller: ownerName,
@@ -242,7 +317,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 3,
                 ),
                 TextFormField(
                   controller: ownerEmail,
@@ -274,7 +349,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 80,
                 ),
               ],
             ),
@@ -283,21 +358,30 @@ class _ShopInfo1State extends State<ShopInfo1> {
       ),
 
       ///AIzaSyCqN-UmXfm_2eFJNRialgRvO1Utmn8IZPE
-      bottomSheet: ButtonNoRadius(
-          function: () {
-            if (formKey.currentState!.validate()) {
-              formKey.currentState!.save();
-              authController.shopName.value = nameController.text.trim();
-              authController.categoryName.value = _selectedValue!;
-              authController.categoryId.value = selectCategoryId!;
-              authController.shopOwnerName.value = ownerName.text.trim();
-              authController.showOwnerEmail.value = ownerEmail.text.trim();
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: ButtonNoRadius(
+            function: () {
+              if (authController.storeTimings.isEmpty) {
+                Utils.showSnackBarError(
+                    context: context, title: 'Please enter your shop timings');
+                return;
+              }
+              if (formKey.currentState!.validate()) {
+                formKey.currentState!.save();
+                authController.tradeName.value = tradeName.text.trim();
+                authController.shopName.value = nameController.text.trim();
+                authController.categoryName.value = _selectedValue!;
+                authController.categoryId.value = selectCategoryId!;
+                authController.shopOwnerName.value = ownerName.text.trim();
+                authController.showOwnerEmail.value = ownerEmail.text.trim();
 
-              Get.to(() => ShopInfo2());
-            }
-          },
-          text: 'Next',
-          active: true),
+                Get.to(() => const ShopInfo2());
+              }
+            },
+            text: 'Next',
+            active: true),
+      ),
     );
   }
 }

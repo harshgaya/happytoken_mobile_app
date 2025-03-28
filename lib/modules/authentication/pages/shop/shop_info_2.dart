@@ -24,11 +24,12 @@ class _ShopInfo2State extends State<ShopInfo2> {
   MapPickerController mapPickerController = MapPickerController();
 
   CameraPosition cameraPosition = const CameraPosition(
-    target: LatLng(12.9716, 77.5946),
+    target: LatLng(19.2041136, 72.8517376),
     zoom: 14.4746,
   );
   String? city;
   String? state;
+  String? pincode;
 
   var textController = TextEditingController();
   @override
@@ -43,21 +44,18 @@ class _ShopInfo2State extends State<ShopInfo2> {
               'assets/icons/shop_details/pin.png',
               height: 50,
             ),
-            //add map picker controller
+
             mapPickerController: mapPickerController,
             child: GoogleMap(
               myLocationEnabled: true,
               zoomControlsEnabled: false,
-              // hide location button
               myLocationButtonEnabled: false,
               mapType: MapType.normal,
-              //  camera position
               initialCameraPosition: cameraPosition,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
               onCameraMoveStarted: () {
-                // notify map is moving
                 mapPickerController.mapMoving!();
                 textController.text = "checking ...";
               },
@@ -65,14 +63,14 @@ class _ShopInfo2State extends State<ShopInfo2> {
                 this.cameraPosition = cameraPosition;
               },
               onCameraIdle: () async {
-                // notify map stopped moving
                 mapPickerController.mapFinishedMoving!();
-                //get address name from camera position
+
                 List<Placemark> placemarks = await placemarkFromCoordinates(
                   cameraPosition.target.latitude,
                   cameraPosition.target.longitude,
                 );
                 city = placemarks.first.locality;
+                pincode = placemarks.first.postalCode;
                 state = placemarks.first.administrativeArea;
                 textController.text =
                     '${placemarks.first.name},${placemarks.first.locality} ${placemarks.first.administrativeArea}, ';
@@ -119,6 +117,7 @@ class _ShopInfo2State extends State<ShopInfo2> {
                     authController.city.value = city ?? '';
                     authController.state.value = state ?? '';
                     Get.to(() => ShopInfo3(
+                          pincode: pincode ?? '',
                           city: city ?? '',
                         ));
                   },

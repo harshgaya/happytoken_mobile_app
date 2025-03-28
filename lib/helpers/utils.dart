@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:happy_tokens/helpers/colors.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,6 +34,7 @@ class Utils {
         color: Colors.green,
         title: 'Success!!',
         message: title,
+        messageTextStyle: const TextStyle(fontWeight: FontWeight.bold),
         contentType: ContentType.success,
       ),
     );
@@ -48,6 +50,7 @@ class Utils {
       elevation: 0,
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
+      duration: const Duration(milliseconds: 1000),
       content: AwesomeSnackbarContent(
         color: Colors.red,
         title: 'Error occurred!!',
@@ -62,21 +65,23 @@ class Utils {
   }
 
   static Future<Uint8List?> pickFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
+    try {
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.image);
 
-    if (result != null) {
-      String? filePath = result.files.first.path;
+      if (result != null) {
+        String? filePath = result.files.first.path;
 
-      if (filePath != null) {
-        File file = File(filePath);
-        return await file.readAsBytes();
+        if (filePath != null) {
+          File file = File(filePath);
+          return await file.readAsBytes();
+        } else {
+          return result.files.first.bytes;
+        }
       } else {
-        return result.files.first.bytes;
+        return null;
       }
-    } else {
-      return null;
-    }
+    } catch (e) {}
   }
 
   static Future<String> uploadFileToCloudFlare({
@@ -132,15 +137,76 @@ class Utils {
 
       // Utils.showSnackBarSuccess(
       //     context: context, title: 'File uploaded successfully!');
-      print(
-          'url file: https://pub-0dd56aa0dbde48edbbf6cd849e9e5560.r2.dev/$fileNameWithPath');
 
-      return 'https://pub-0dd56aa0dbde48edbbf6cd849e9e5560.r2.dev/$fileNameWithPath';
+      return 'https://d2yhk23ciu9dj0.cloudfront.net/$fileNameWithPath';
     } catch (error) {
       print('error occurrd $error');
       Utils.showSnackBarError(context: context, title: 'unable to upload file');
 
       return '';
     }
+  }
+
+  static String timeToIst({required String timestamp}) {
+    DateTime dateTime = DateTime.parse(timestamp).toLocal();
+    return DateFormat('MMM d yyyy, h:mm a').format(dateTime);
+  }
+
+  static void showNonDismissableDialog(
+      {required BuildContext context, required String title}) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevents dialog from being dismissed by tapping outside
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: const Row(
+            children: [
+              CircularProgressIndicator(), // Loader
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static String maskedMobile(String? mobile) {
+    if (mobile == null || mobile.length < 3) return '***';
+    return '*******${mobile.substring(mobile.length - 3)}';
+  }
+
+  static String getTodayShopStatus(Map<String, dynamic> shopTimings) {
+    try {
+      if (shopTimings.isEmpty) {
+        return '';
+      }
+      String today = DateFormat('EEE').format(DateTime.now());
+      String currentTime = DateFormat('hh:mm a').format(DateTime.now());
+
+      String todayTimings = shopTimings[today] ?? "Closed";
+
+      if (todayTimings == "Closed") {
+        return "Closed";
+      }
+      String openingTime = todayTimings.split(" - ")[0];
+      DateTime now = DateFormat('hh:mm a').parse(currentTime);
+      DateTime openTime = DateFormat('hh:mm a').parse(openingTime);
+
+      if (now.isBefore(openTime)) {
+        return "Opens at $openingTime";
+      } else {
+        return "Open";
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+
+  static String getDiscountRange(double commission) {
+    int lowerBound = (commission / 2).clamp(1, double.infinity).round();
+    int upperBound = (commission * 1.5).round();
+
+    return 'Save $lowerBound% to $upperBound% on Bill';
   }
 }

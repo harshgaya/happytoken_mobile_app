@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:io' show Platform;
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:happy_tokens/modules/authentication/pages/login_screen.dart';
@@ -31,7 +33,12 @@ class AuthenticationController extends GetxController {
   RxList<CategoryData> category = <CategoryData>[].obs;
 
   ///shop details
+  RxString pancardNumber = ''.obs;
+  RxString gstNumber = ''.obs;
+  RxString businessType = ''.obs;
   RxString shopName = ''.obs;
+  RxMap storeTimings = {}.obs;
+  RxString tradeName = ''.obs;
   RxString categoryName = ''.obs;
   RxString categoryId = ''.obs;
   RxString shopOwnerName = ''.obs;
@@ -41,10 +48,15 @@ class AuthenticationController extends GetxController {
   RxString city = ''.obs;
   RxString state = ''.obs;
   RxString shopNumber = ''.obs;
+  RxString pincode = ''.obs;
   RxString floor = ''.obs;
   RxString area = ''.obs;
   RxString landmark = ''.obs;
   RxString bankAccount = ''.obs;
+  RxString bankAccountName = ''.obs;
+  RxString bankName = ''.obs;
+  RxString bankBranchName = ''.obs;
+  RxString bankIFSCCode = ''.obs;
   RxInt cashbackToCustomer = 0.obs;
 
   RxBool addingShopDetails = false.obs;
@@ -135,7 +147,7 @@ class AuthenticationController extends GetxController {
           ));
       sessionId.value = response['data'][0]['sessionId'];
       Utils.showSnackBarSuccess(
-          context: context, title: 'OTP sent successfully');
+          context: context, title: 'OTP sent to your whatsapp successfully.');
     } catch (e) {
       otpSending.value = false;
       print('error $e');
@@ -168,7 +180,7 @@ class AuthenticationController extends GetxController {
           ));
       sessionId.value = response['data'][0]['sessionId'];
       Utils.showSnackBarSuccess(
-          context: context, title: 'OTP sent successfully');
+          context: context, title: 'OTP sent to your whatsapp successfully.');
     } catch (e) {
       otpSending.value = false;
       print('error $e');
@@ -185,8 +197,8 @@ class AuthenticationController extends GetxController {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       otpVerifying.value = true;
-      var response = await _apiServices
-          .getApi('${UrlConstants.verifyOtp}/${sessionId.value}/${otp}');
+      var data = {"mobile": mobile, "otp": otp, "sessionId": sessionId.value};
+      var response = await _apiServices.postApi(data, UrlConstants.verifyOtp);
       otpVerifying.value = false;
       Utils.showSnackBarSuccess(
           context: context, title: 'OTP verified successfully');
@@ -209,9 +221,10 @@ class AuthenticationController extends GetxController {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
+      var data = {"mobile": mobile, "otp": otp, "sessionId": sessionId.value};
       otpVerifying.value = true;
-      var response = await _apiServices
-          .getApi('${UrlConstants.verifyOtpShop}/${sessionId.value}/${otp}');
+      var response =
+          await _apiServices.postApi(data, '${UrlConstants.verifyOtpShop}');
       otpVerifying.value = false;
       Utils.showSnackBarSuccess(
           context: context, title: 'OTP verified successfully');
@@ -255,7 +268,35 @@ class AuthenticationController extends GetxController {
     await sharedPreferences.remove(SharedPreferenceKey.login);
     await sharedPreferences.remove(SharedPreferenceKey.userType);
     await sharedPreferences.remove(SharedPreferenceKey.shopStatus);
-    Get.offAll(const UserState());
+
+    if (Platform.isIOS) {
+      Get.offAll(const UserState());
+    } else {
+      await FirebaseMessaging.instance.deleteToken();
+      FirebaseMessaging.instance.unsubscribeFromTopic("happy-tokens");
+      Get.offAll(const UserState());
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var response = await _apiServices.getApi(
+        '${UrlConstants.deleteAccount}/${sharedPreferences.getString(SharedPreferenceKey.userId)}');
+    await sharedPreferences.remove(SharedPreferenceKey.name);
+    await sharedPreferences.remove(SharedPreferenceKey.mobile);
+    await sharedPreferences.remove(SharedPreferenceKey.userId);
+    await sharedPreferences.remove(SharedPreferenceKey.jwtToken);
+    await sharedPreferences.remove(SharedPreferenceKey.login);
+    await sharedPreferences.remove(SharedPreferenceKey.userType);
+    await sharedPreferences.remove(SharedPreferenceKey.shopStatus);
+
+    if (Platform.isIOS) {
+      Get.offAll(const UserState());
+    } else {
+      await FirebaseMessaging.instance.deleteToken();
+      FirebaseMessaging.instance.unsubscribeFromTopic("happy-tokens");
+      Get.offAll(const UserState());
+    }
   }
 
   Future<void> getCategory() async {
@@ -269,29 +310,164 @@ class AuthenticationController extends GetxController {
     }
   }
 
-  Future<void> addShopDetails(
-      {required Uint8List restaurantImage,
-      required Uint8List panImage,
-      required BuildContext context}) async {
+  // Future<void> addShopDetails(
+  //     {required Uint8List restaurantImage,
+  //     required Uint8List panImage,
+  //     required Uint8List bankPassbook,
+  //     Uint8List? gstImage,
+  //     Uint8List? businessImage,
+  //     required BuildContext context}) async {
+  //   try {
+  //     addingShopDetails.value = true;
+  //     SharedPreferences sharedPreferences =
+  //         await SharedPreferences.getInstance();
+  //
+  //     Map<String, Future<String>> uploadTasks = {};
+  //     uploadTasks.add(
+  //       Utils.uploadFileToCloudFlare(
+  //           fileBytes: restaurantImage,
+  //           isVideo: false,
+  //           context: context,
+  //           path: 'RestaurantImages',
+  //           onProgress: (va) {}),
+  //     );
+  //     uploadTasks.add(
+  //       Utils.uploadFileToCloudFlare(
+  //           fileBytes: panImage,
+  //           isVideo: false,
+  //           context: context,
+  //           path: 'PANImages',
+  //           onProgress: (va) {}),
+  //     );
+  //     uploadTasks.add(Utils.uploadFileToCloudFlare(
+  //         fileBytes: bankPassbook,
+  //         isVideo: false,
+  //         context: context,
+  //         path: 'BankPassbookImage',
+  //         onProgress: (va) {}));
+  //     if (gstImage != null) {
+  //       uploadTasks.add(Utils.uploadFileToCloudFlare(
+  //           fileBytes: gstImage,
+  //           isVideo: false,
+  //           context: context,
+  //           path: 'gstImages',
+  //           onProgress: (va) {}));
+  //     }
+  //     if (businessImage != null) {
+  //       uploadTasks.add(Utils.uploadFileToCloudFlare(
+  //           fileBytes: businessImage,
+  //           isVideo: false,
+  //           context: context,
+  //           path: 'businessImages',
+  //           onProgress: (va) {}));
+  //     }
+  //
+  //     List images = await Future.wait(uploadTasks).catchError((error) {
+  //       Utils.showSnackBarError(
+  //           context: context, title: 'Error uploading image');
+  //       addingShopDetails.value = false;
+  //     });
+  //
+  //     var data = {
+  //       "id": sharedPreferences.getString(SharedPreferenceKey.userId),
+  //       "shop_name": shopName.value,
+  //       "shop_timings": storeTimings,
+  //       "category_name": categoryName.value,
+  //       "category_id": categoryId.value,
+  //       "pan_card_number": pancardNumber.value,
+  //       "pan_card_image": images[1],
+  //       "gst_image":
+  //       "business_type": businessType.value,
+  //       "bankaccount_number": bankAccount.value,
+  //       "bankaccount_image": images[2],
+  //       "owner_name": shopOwnerName.value,
+  //       "owner_email": showOwnerEmail.value,
+  //       "latitude": latitude.value,
+  //       "trade_name": tradeName.value,
+  //       "bank_account_name": bankAccountName.value,
+  //       "bank_name": bankName.value,
+  //       "bank_branch_name": bankBranchName.value,
+  //       "bank_ifsc_code": bankIFSCCode.value,
+  //       "longitude": longitude.value,
+  //       "shop_number": shopNumber.value,
+  //       "floor": floor.value,
+  //       "pincode": pincode.value,
+  //       "area": area.value,
+  //       "city": city.value,
+  //       "state": state.value,
+  //       "landmark": landmark.value,
+  //       "shop_image": images[0],
+  //       "commission": cashbackToCustomer.value
+  //     };
+  //     var response =
+  //         await _apiServices.postApi(data, UrlConstants.addShopDetails);
+  //     sharedPreferences.setString(SharedPreferenceKey.name, shopName.value);
+  //     Get.offAll(() => const UserState());
+  //   } catch (e) {
+  //     addingShopDetails.value = false;
+  //   }
+  // }
+  Future<void> addShopDetails({
+    required Uint8List restaurantImage,
+    required Uint8List panImage,
+    required Uint8List bankPassbook,
+    Uint8List? gstImage,
+    Uint8List? businessImage,
+    required BuildContext context,
+  }) async {
     try {
       addingShopDetails.value = true;
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
 
-      List<String> images = await Future.wait([
-        Utils.uploadFileToCloudFlare(
-            fileBytes: restaurantImage,
-            isVideo: false,
-            context: context,
-            path: 'RestaurantImages',
-            onProgress: (va) {}),
-        Utils.uploadFileToCloudFlare(
-            fileBytes: panImage,
-            isVideo: false,
-            context: context,
-            path: 'PANImages',
-            onProgress: (va) {})
-      ]).catchError((error) {
+      Map<String, Future<String>> uploadTasks = {
+        "shop_image": Utils.uploadFileToCloudFlare(
+          fileBytes: restaurantImage,
+          isVideo: false,
+          context: context,
+          path: 'shopImages',
+          onProgress: (va) {},
+        ),
+        "pan_card_image": Utils.uploadFileToCloudFlare(
+          fileBytes: panImage,
+          isVideo: false,
+          context: context,
+          path: 'PANImages',
+          onProgress: (va) {},
+        ),
+        "bankaccount_image": Utils.uploadFileToCloudFlare(
+          fileBytes: bankPassbook,
+          isVideo: false,
+          context: context,
+          path: 'BankPassbookImage',
+          onProgress: (va) {},
+        ),
+      };
+
+      if (gstImage != null) {
+        uploadTasks["gst_image"] = Utils.uploadFileToCloudFlare(
+          fileBytes: gstImage,
+          isVideo: false,
+          context: context,
+          path: 'gstImages',
+          onProgress: (va) {},
+        );
+      }
+
+      if (businessImage != null) {
+        uploadTasks["business_image"] = Utils.uploadFileToCloudFlare(
+          fileBytes: businessImage,
+          isVideo: false,
+          context: context,
+          path: 'businessImages',
+          onProgress: (va) {},
+        );
+      }
+
+      Map<String, String> uploadedImages = {};
+      await Future.wait(uploadTasks.entries.map((entry) async {
+        uploadedImages[entry.key] = await entry.value;
+      })).catchError((error) {
         Utils.showSnackBarError(
             context: context, title: 'Error uploading image');
         addingShopDetails.value = false;
@@ -300,28 +476,42 @@ class AuthenticationController extends GetxController {
       var data = {
         "id": sharedPreferences.getString(SharedPreferenceKey.userId),
         "shop_name": shopName.value,
+        "shop_timings": storeTimings,
         "category_name": categoryName.value,
         "category_id": categoryId.value,
-        "pan_card_number": "",
-        "pan_card_image": images[1],
+        "pan_card_number": pancardNumber.value,
+        "pan_card_image": uploadedImages["pan_card_image"],
+        "gst_number": gstNumber.value,
+        "gst_image": uploadedImages["gst_image"],
+        "business_type": businessType.value,
+        "business_image": uploadedImages['business_image'],
         "bankaccount_number": bankAccount.value,
-        "bankaccount_image": "fer",
+        "bankaccount_image": uploadedImages["bankaccount_image"],
         "owner_name": shopOwnerName.value,
         "owner_email": showOwnerEmail.value,
         "latitude": latitude.value,
+        "trade_name": tradeName.value,
+        "bank_account_name": bankAccountName.value,
+        "bank_name": bankName.value,
+        "bank_branch_name": bankBranchName.value,
+        "bank_ifsc_code": bankIFSCCode.value,
         "longitude": longitude.value,
         "shop_number": shopNumber.value,
         "floor": floor.value,
+        "pincode": pincode.value,
         "area": area.value,
         "city": city.value,
         "state": state.value,
         "landmark": landmark.value,
-        "shop_image": images[0],
-        "commission": cashbackToCustomer.value
+        "shop_image": uploadedImages["shop_image"],
+        "commission": cashbackToCustomer.value,
       };
+
+      print('gst number ${gstNumber.value}');
       var response =
           await _apiServices.postApi(data, UrlConstants.addShopDetails);
       sharedPreferences.setString(SharedPreferenceKey.name, shopName.value);
+      addingShopDetails.value = false;
       Get.offAll(() => const UserState());
     } catch (e) {
       addingShopDetails.value = false;

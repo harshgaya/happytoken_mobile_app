@@ -1,3 +1,41 @@
+//buildscript {
+//    ext.kotlin_version = '1.7.10'
+//    repositories {
+//        google()
+//        mavenCentral()
+//    }
+//
+//    dependencies {
+//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//    }
+//}
+//
+//allprojects {
+//    repositories {
+//        google()
+//        mavenCentral()
+//        maven { url "https://jitpack.io" }
+//
+//        maven {
+//            url  "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-android"
+//        }
+//        flatDir {
+//            dirs 'libs'
+//        }
+//    }
+//}
+//
+//rootProject.buildDir = '../build'
+//subprojects {
+//    project.buildDir = "${rootProject.buildDir}/${project.name}"
+//}
+//subprojects {
+//    project.evaluationDependsOn(':app')
+//}
+//
+//tasks.register("clean", Delete) {
+//    delete rootProject.buildDir
+//}
 buildscript {
     ext.kotlin_version = '1.7.10'
     repositories {
@@ -14,8 +52,11 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url  "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-android"
+        maven { url "https://jitpack.io" }
+        maven { url "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-android" }
+
+        flatDir {
+            dirs project(':app').file('libs')  // ✅ Ensures AAR file is picked up
         }
     }
 }

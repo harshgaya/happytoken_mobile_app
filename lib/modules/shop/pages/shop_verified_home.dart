@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:happy_tokens/modules/authentication/authentication_controller.dart';
 import 'package:happy_tokens/modules/shop/controller/shop_controller.dart';
+import 'package:happy_tokens/modules/shop/pages/settlement.dart';
+import 'package:happy_tokens/modules/shop/pages/shop_homepage.dart';
+import 'package:happy_tokens/modules/shop/pages/shop_transactions.dart';
+import 'package:happy_tokens/modules/shop/widgets/stack_tile.dart';
+import 'package:happy_tokens/modules/user/pages/help/help.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../user/controller/user_controller.dart';
@@ -23,168 +28,88 @@ class _ShopVerifiedHomeState extends State<ShopVerifiedHome> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    userController.getBanners();
+    shopController.checkShopStatus();
   }
+
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    ShopHomePage(),
+    ShopTransactions(),
+    Settlement(),
+    HelpScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(() => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.location_on_rounded,
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              shopController.shopName.value,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          ],
-                        ),
-                        Text(
-                          shopController.shopAddress.value,
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
-                        )
-                      ],
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        await authController.logout();
-                      },
-                      icon: const Icon(Icons.power_settings_new),
-                    ),
-                  ],
-                ),
-                Obx(
-                  () => userController.bannerLoading.value
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
-                            direction: ShimmerDirection.ltr,
-                            period: const Duration(seconds: 2),
-                            child: Container(
-                              width: Get.width,
-                              height: 130,
-                              color: Colors
-                                  .grey[300], // This will be the base shape
-                            ),
-                          ),
-                        )
-                      : CarouselSlider(
-                          items: userController.banners
-                              .map((e) => Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: Image.network(e.image),
-                                  ))
-                              .toList(),
-                          options: CarouselOptions(
-                            autoPlay: true,
-                          )),
-                ),
-                const Text(
-                  'Quick Links',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          height: 80,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 2,
-                                )
-                              ]),
-                          child: Icon(
-                            Icons.currency_rupee,
-                            color: Colors.grey,
-                            size: 50,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text(
-                          'My Payouts',
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          height: 80,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 2,
-                                )
-                              ]),
-                          child: const Icon(
-                            Icons.help_outline,
-                            color: Colors.grey,
-                            size: 50,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text(
-                          'Help Center',
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Exit App?"),
+            content: const Text("Are you sure you want to exit?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Exit"),
+              ),
+            ],
+          ),
+        );
+
+        // Only pop the page if the user confirms exit (shouldExit == true)
+        if (shouldExit ?? false) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.blue,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            unselectedItemColor: Colors.black54,
+            unselectedLabelStyle: const TextStyle(
+              color: Colors.black54,
             ),
-          )),
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.history),
+                label: 'Transactions',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.currency_rupee),
+                label: 'Settlements',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.help),
+                label: 'Help',
+              ),
+            ],
+          ),
+          body: _screens[_currentIndex],
+        ),
+      ),
     );
   }
 }
