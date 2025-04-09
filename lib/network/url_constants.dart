@@ -26,6 +26,8 @@ class UrlConstants {
       '${BASE_URL}get-shop-lifetime-transactions';
   static const getMonthlyTransactions =
       '${BASE_URL}get-shop-monthly-transactions';
+  static const getDatewiseTransactions =
+      '${BASE_URL}get-shop-date-transactions';
 
   ///user
   static const getVerifiedShops = '${BASE_URL}admin/getVerifiedShops';

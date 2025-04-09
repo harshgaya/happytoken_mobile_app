@@ -113,9 +113,11 @@ class _PaymentMethodState extends State<PaymentMethod> {
     //rzp_live_vQEyzDyrQuagcz
     //
     // manessh api razo rzp_live_Q17zUkAmZ1ELxF
+    int roundedAmountInPaise =
+        (double.parse(amount.toStringAsFixed(2)) * 100).round();
     var options = {
       'key': 'rzp_live_8zD4EN5LNtRy3H',
-      'amount': amount * 100,
+      'amount': amount,
       "order_id": orderId,
       'name': 'Happy Tokens By ADPRO',
       'image':
@@ -201,7 +203,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               ),
                             ),
                             Text(
-                              '₹$totalAmountWithDiscount',
+                              '₹${totalAmountWithDiscount.toStringAsFixed(2)}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF010101),
@@ -239,7 +241,8 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               color: Colors.green,
                             ),
                           ),
-                          Text('₹${totalAmountWithDiscount.toString()}'),
+                          Text(
+                              '₹${totalAmountWithDiscount.toStringAsFixed(2)}'),
                         ],
                       ),
                     ),
@@ -265,7 +268,8 @@ class _PaymentMethodState extends State<PaymentMethod> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('₹${totalAmountWithDiscount.toString()}'),
+                          Text(
+                              '₹${totalAmountWithDiscount.toStringAsFixed(2)}'),
                           Text(
                               'pay only ₹${(totalAmountWithDiscount - userController.walletBalance.value).toStringAsFixed(2)}'),
                         ],
@@ -284,7 +288,52 @@ class _PaymentMethodState extends State<PaymentMethod> {
                         });
                       },
                     ),
-                    subtitle: Text('₹${totalAmountWithDiscount.toString()}'),
+                    subtitle:
+                        Text('₹${totalAmountWithDiscount.toStringAsFixed(2)}'),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.blue,
+                          gradient: const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.blue,
+                                Colors.blueAccent,
+                              ])),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Disclaimer!!',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            'Please do not close the app or switch screens until the payment is completed.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              height: 1.2,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const Spacer(),
                   Obx(() => userController.paying.value
@@ -340,8 +389,25 @@ class _PaymentMethodState extends State<PaymentMethod> {
                                         try {
                                           orderId = await userController
                                               .generateOrderId(
-                                                  amount:
-                                                      totalAmountWithDiscount);
+                                            amount: totalAmountWithDiscount,
+                                            shopId: widget.shopData.id,
+                                            shopName: widget.shopData.shopName,
+                                            shopLocation:
+                                                '${widget.shopData.area}, ${widget.shopData.city}',
+                                            totalAmountWithoutDiscount:
+                                                widget.totalAmountEntered,
+                                            totalAmountWithDiscount:
+                                                totalAmountWithDiscount,
+                                            cashbackAmount: cashbackAmount,
+                                            discountAmount: discountAmount,
+                                            discountPercent:
+                                                widget.shopData.discount,
+                                            cashbackPercent:
+                                                widget.shopData.cashback,
+                                            amountPaidByPg: amountPaidByPg,
+                                            amountPaidByWallet:
+                                                amountPaidUsingWallet,
+                                          );
                                           if (orderId != null ||
                                               orderId!.isNotEmpty) {
                                             openCheckout(
@@ -361,11 +427,27 @@ class _PaymentMethodState extends State<PaymentMethod> {
                                         try {
                                           orderId = await userController
                                               .generateOrderId(
-                                                  amount:
-                                                      totalAmountWithDiscount -
-                                                          userController
-                                                              .walletBalance
-                                                              .value);
+                                            amount: totalAmountWithDiscount -
+                                                userController
+                                                    .walletBalance.value,
+                                            shopId: widget.shopData.id,
+                                            shopName: widget.shopData.shopName,
+                                            shopLocation:
+                                                '${widget.shopData.area}, ${widget.shopData.city}',
+                                            totalAmountWithoutDiscount:
+                                                widget.totalAmountEntered,
+                                            totalAmountWithDiscount:
+                                                totalAmountWithDiscount,
+                                            cashbackAmount: cashbackAmount,
+                                            discountAmount: discountAmount,
+                                            discountPercent:
+                                                widget.shopData.discount,
+                                            cashbackPercent:
+                                                widget.shopData.cashback,
+                                            amountPaidByPg: amountPaidByPg,
+                                            amountPaidByWallet:
+                                                amountPaidUsingWallet,
+                                          );
                                           if (orderId != null ||
                                               orderId!.isNotEmpty) {
                                             openCheckout(

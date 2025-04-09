@@ -6,12 +6,16 @@ class SettlementTile extends StatelessWidget {
   final String totalTransactions;
   final String paidForDate;
   final String amountPaid;
+  final String totalDiscount;
+  final String platformFee;
   const SettlementTile(
       {super.key,
       required this.paidAtDate,
       required this.totalTransactions,
       required this.paidForDate,
-      required this.amountPaid});
+      required this.amountPaid,
+      required this.totalDiscount,
+      required this.platformFee});
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +91,55 @@ class SettlementTile extends StatelessWidget {
                       ),
                     ),
                   ]),
-            )
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Container(
+              width: Get.width,
+              height: 1,
+              color: const Color(0xFF858593),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total Discount',
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  '₹$totalDiscount',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Platform Fee',
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  '₹$platformFee',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

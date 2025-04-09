@@ -266,7 +266,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                                   color: Colors.green),
                             ),
                             Text(
-                              '₹${widget.transactionData.discountAmount}',
+                              '₹${widget.transactionData.discountAmount.toStringAsFixed(2)}',
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.green),
@@ -323,8 +323,8 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                               style: TextStyle(),
                             ),
                             Text(
-                              '₹${widget.transactionData.totalAmountWithDiscount}',
-                            )
+                              '₹${widget.transactionData.totalAmountWithDiscount.toStringAsFixed(2)}',
+                            ),
                           ],
                         ),
                       ],

@@ -30,6 +30,7 @@ class _ShopDashboardState extends State<ShopDashboard> {
     return RefreshIndicator(
       onRefresh: _refreshData,
       child: Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Obx(
           () {
             if (shopController.checkingShopStatus.value) {

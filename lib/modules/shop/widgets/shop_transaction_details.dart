@@ -286,11 +286,11 @@ class _ShopTransactionDetailsState extends State<ShopTransactionDetails> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            'You Paid To Shop',
+                            'Paid To Shop',
                             style: TextStyle(),
                           ),
                           Text(
-                            '₹${widget.transactionData.totalAmountWithDiscount}',
+                            '₹${widget.transactionData.totalAmountWithDiscount.toStringAsFixed(2)}',
                           )
                         ],
                       ),

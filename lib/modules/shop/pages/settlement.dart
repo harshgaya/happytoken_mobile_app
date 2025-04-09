@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:happy_tokens/helpers/utils.dart';
 import 'package:happy_tokens/modules/shop/controller/shop_controller.dart';
+import 'package:happy_tokens/modules/shop/widgets/settlement_box.dart';
 import 'package:happy_tokens/modules/shop/widgets/settlement_tile.dart';
 
 import '../widgets/stack_tile.dart';
@@ -65,14 +66,14 @@ class _SettlementState extends State<Settlement> {
                 Positioned(
                   top: 90,
                   left: (Get.width / 2) - ((Get.width - 30) / 2),
-                  child: StackTile(
+                  child: SettlementBox(
                     text1: "Total Paid",
                     text2: '₹${shopController.settlementTotalAmount.value}',
                     text3: '',
                     text4: '₹${shopController.settlementTotalAmount.value}',
-                    text5: 'Total',
+                    text5: 'Total Amount',
                     text6: '₹${shopController.settlementTotalDiscount.value}',
-                    text7: 'Discount',
+                    text7: 'Total Discount Amount',
                     text8:
                         '₹${shopController.settlementTotalPlatformFee.value}',
                     text9: 'Platform Fee',
@@ -81,7 +82,7 @@ class _SettlementState extends State<Settlement> {
               ],
             ),
             const SizedBox(
-              height: 150,
+              height: 170,
             ),
             Expanded(
               child: ListView.builder(
@@ -93,6 +94,8 @@ class _SettlementState extends State<Settlement> {
                       totalTransactions: item.totalTransactions,
                       paidForDate: item.paidForDate,
                       amountPaid: item.totalAmount,
+                      totalDiscount: item.totalDiscount,
+                      platformFee: item.platformFee,
                     );
                   }),
             )

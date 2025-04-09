@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:happy_tokens/modules/shop/pages/graph_transactions.dart';
+import 'package:intl/intl.dart';
 import 'package:upgrader/upgrader.dart';
 
 import '../../authentication/authentication_controller.dart';
@@ -35,13 +38,24 @@ class _ShopHomePageState extends State<ShopHomePage> {
     ]);
   }
 
+  Future<void> _refreshData() async {
+    Future.wait([
+      shopController.getMonthlyTransactions(),
+      shopController.getLifetimeTransactions(),
+      shopController.getTodayTransactions(),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return UpgradeAlert(
       barrierDismissible: false,
       showIgnore: false,
       showLater: false,
-      child: Obx(() => ListView(
+      child: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: Obx(
+          () => ListView(
             children: [
               Stack(
                 clipBehavior: Clip.none,
@@ -57,35 +71,37 @@ class _ShopHomePageState extends State<ShopHomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on_rounded,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  shopController.shopName.value,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_rounded,
                                     color: Colors.white,
                                   ),
-                                )
-                              ],
-                            ),
-                            Text(
-                              shopController.shopAddress.value,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    shopController.shopName.value,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
+                              Text(
+                                shopController.shopAddress.value,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                         IconButton(
                           onPressed: () async {
@@ -211,12 +227,14 @@ class _ShopHomePageState extends State<ShopHomePage> {
                           text8:
                               shopController.todayTotalPendingTransaction.value,
                           text9: 'Pending',
+                          totalAmountWithDiscount:
+                              '₹${shopController.todayTotalDiscountAmount.value}',
                         )),
                   ),
                 ],
               ),
               const SizedBox(
-                height: 160,
+                height: 255,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15, right: 15),
@@ -231,15 +249,61 @@ class _ShopHomePageState extends State<ShopHomePage> {
                   text7: 'Failed',
                   text8: shopController.lifetimeTotalPendingTransaction.value,
                   text9: 'Pending',
+                  totalAmountWithDiscount:
+                      '₹${shopController.lifetimeTotalDiscountAmount.value}',
                 ),
               ),
-              Obx(
-                () => TransactionsGraphPage(
-                  monthlyAmounts: shopController.monthlyAmounts.value,
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: StackTile(
+                  widget: IconButton(
+                    onPressed: () async {
+                      final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now(),
+                      );
+
+                      if (pickedDate != null) {
+                        shopController.getDatewiseTransactions(
+                            date: DateFormat('yyyy-MM-dd').format(pickedDate));
+                        //2025-04-03 00:00:00.000
+                        print(
+                            'Selected Date: ${DateFormat('yyyy-MM-dd').format(pickedDate)}');
+                        // You can format the date as needed using intl package
+                      }
+                    },
+                    icon: const Icon(Icons.date_range),
+                  ),
+                  text1: "Date Wise Transactions",
+                  text2: '₹${shopController.totalAmount.value}',
+                  text3: '${shopController.datetime.value}',
+                  text4: shopController.totalSuccessfulTrans.value,
+                  text5: 'Successfull',
+                  text6: shopController.totalFailedTrans.value,
+                  text7: 'Failed',
+                  text8: shopController.totalPendingTrans.value,
+                  text9: 'Pending',
+                  totalAmountWithDiscount:
+                      '₹${shopController.totalAmountWithDiscount.value}',
                 ),
-              )
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Obx(() {
+                return TransactionsGraphPage(
+                  monthlyAmounts: shopController.monthlyAmounts.value,
+                );
+              }),
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

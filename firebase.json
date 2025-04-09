@@ -1,1 +1,43 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"happy-tokens","appId":"1:1086202798340:android:bca5a45fd3cd3d06a03051","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"happy-tokens","appId":"1:1086202798340:ios:e5b8922cf1b8d0c5a03051","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"happy-tokens","configurations":{"android":"1:1086202798340:android:bca5a45fd3cd3d06a03051","ios":"1:1086202798340:ios:e5b8922cf1b8d0c5a03051"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "happy-tokens",
+          "appId": "1:1086202798340:android:bca5a45fd3cd3d06a03051",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "happy-tokens",
+          "appId": "1:1086202798340:ios:e5b8922cf1b8d0c5a03051",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "happy-tokens",
+          "configurations": {
+            "android": "1:1086202798340:android:bca5a45fd3cd3d06a03051",
+            "ios": "1:1086202798340:ios:e5b8922cf1b8d0c5a03051"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

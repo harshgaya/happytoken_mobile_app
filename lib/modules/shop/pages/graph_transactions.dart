@@ -31,6 +31,14 @@ class TransactionsGraphPage extends StatelessWidget {
                 child: LineChart(
                   LineChartData(
                     titlesData: FlTitlesData(
+                      topTitles: const AxisTitles(
+                        // 🔴 Disable top
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: const AxisTitles(
+                        // 🔴 Disable right
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,

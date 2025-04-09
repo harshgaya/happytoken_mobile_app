@@ -42,11 +42,20 @@ class ShopController extends GetxController {
   RxString todayTotalSuccessfulTransaction = "0".obs;
   RxString todayTotalFailedTransaction = "0".obs;
   RxString todayTotalPendingTransaction = "0".obs;
+  RxString todayTotalDiscountAmount = "0".obs;
 
   RxString lifetimeTotalAmount = "0".obs;
   RxString lifetimeTotalSuccessfulTransaction = "0".obs;
   RxString lifetimeTotalFailedTransaction = "0".obs;
   RxString lifetimeTotalPendingTransaction = "0".obs;
+  RxString lifetimeTotalDiscountAmount = "0".obs;
+
+  RxString datetime = 'Select Date'.obs;
+  RxString totalSuccessfulTrans = "0".obs;
+  RxString totalFailedTrans = "0".obs;
+  RxString totalPendingTrans = "0".obs;
+  RxString totalAmount = "0".obs;
+  RxString totalAmountWithDiscount = "0".obs;
 
   RxList<FlSpot> monthlyAmounts = <FlSpot>[].obs;
 
@@ -71,7 +80,7 @@ class ShopController extends GetxController {
       shopName.value = response['data'][0]['shop_name'];
       var item = response['data'][0]['shop_address'];
       shopAddress.value =
-          '${item['shop_number']}, ${item['floor']} ${item['area']}, ${item['city']}, ${item['state']}';
+          '${item['shop_number']}, ${item['floor']} ${item['area']}, ${item['city']}';
 
       checkingShopStatus.value = false;
     } catch (e) {
@@ -177,6 +186,8 @@ class ShopController extends GetxController {
           response['data']['failed_transactions'].toString();
       todayTotalPendingTransaction.value =
           response['data']['pending_transactions'].toString();
+      todayTotalDiscountAmount.value =
+          response['data']['total_discount_amount'].toString();
     } catch (e) {}
   }
 
@@ -198,6 +209,32 @@ class ShopController extends GetxController {
           response['data']['failed_transactions'].toString();
       lifetimeTotalPendingTransaction.value =
           response['data']['pending_transactions'].toString();
+      lifetimeTotalDiscountAmount.value =
+          response['data']['total_discount_amount'].toString();
+    } catch (e) {}
+  }
+
+  Future<void> getDatewiseTransactions({required String date}) async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String? userId = sharedPreferences.getString(SharedPreferenceKey.userId);
+
+      var response = await _apiServices
+          .getApi('${UrlConstants.getDatewiseTransactions}/$userId/$date');
+      print(
+        'res ${response}',
+      );
+      datetime.value = response['data']['date_time'];
+      totalAmount.value = response['data']['total_amount'].toString();
+      totalPendingTrans.value =
+          response['data']['pending_transactions'].toString();
+      totalFailedTrans.value =
+          response['data']['failed_transactions'].toString();
+      totalSuccessfulTrans.value =
+          response['data']['successful_transactions'].toString();
+      totalAmountWithDiscount.value =
+          response['data']['total_discount_amount'].toString();
     } catch (e) {}
   }
 
@@ -209,13 +246,16 @@ class ShopController extends GetxController {
 
       var response = await _apiServices
           .getApi('${UrlConstants.getMonthlyTransactions}/$userId');
+
       for (var monthData in response['data']) {
         monthlyAmounts.add(FlSpot(
-          monthData['month'] - 1,
-          monthData['total_amount'].toDouble(),
+          (monthData['month'] as num).toDouble() - 1,
+          double.tryParse(monthData['total_amount'].toString()) ?? 0.0,
         ));
       }
-    } catch (e) {}
+    } catch (e) {
+      print('error $e');
+    }
   }
 
   Future<void> getSettlements() async {
@@ -229,9 +269,7 @@ class ShopController extends GetxController {
       loadingSettlements.value = true;
       var response = await _apiServices
           .getApi('${UrlConstants.getShopSettlements}/$userId/$settlementPage');
-      print(
-        'res $response',
-      );
+
       SettlementModel settlementModel =
           SettlementModel.fromJson(json: response);
       settlementTotalAmount.value = settlementModel.totalAmount;

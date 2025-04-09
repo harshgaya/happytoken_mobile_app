@@ -98,7 +98,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                     children: [
                       Text(
                         // 'Surprise Cashback ${widget.shopData.cashback}%',
-                        'Surprise Cashback 1-10%',
+                        'Instant Cashback 1-10%',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.green),
                       ),
@@ -211,7 +211,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                         style: TextStyle(),
                       ),
                       Text(
-                        '₹${double.tryParse(widget.billAmount.toString())! - (widget.billAmount * widget.shopData.discount / 100)}',
+                        '₹${(double.tryParse(widget.billAmount.toString())! - (widget.billAmount * widget.shopData.discount / 100)).toStringAsFixed(2)}',
                       )
                     ],
                   ),
@@ -257,7 +257,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                               ),
                             ),
                             Text(
-                              '₹${double.tryParse(widget.billAmount.toString())! - (widget.billAmount * (widget.shopData.discount) / 100)}',
+                              '₹${(double.tryParse(widget.billAmount.toString())! - (widget.billAmount * (widget.shopData.discount) / 100)).toStringAsFixed(2)}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w300,

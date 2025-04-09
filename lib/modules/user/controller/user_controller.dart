@@ -242,7 +242,19 @@ class UserController extends GetxController {
     }
   }
 
-  Future<String?> generateOrderId({required dynamic amount}) async {
+  Future<String?> generateOrderId(
+      {required dynamic amount,
+      required String shopId,
+      required String shopName,
+      required String shopLocation,
+      required dynamic totalAmountWithoutDiscount,
+      required dynamic totalAmountWithDiscount,
+      required dynamic cashbackAmount,
+      required dynamic discountAmount,
+      required dynamic discountPercent,
+      required dynamic cashbackPercent,
+      required dynamic amountPaidByPg,
+      required dynamic amountPaidByWallet}) async {
     try {
       if (paying.value) return '';
       paying.value = true;
@@ -261,7 +273,21 @@ class UserController extends GetxController {
         "user_id": userId,
         "user_mobile": userMobile,
         "user_name": userName,
-        "mobile_number": mobileNumber
+        "mobile_number": mobileNumber,
+        "shop_id": shopId,
+        "shop_name": shopName,
+        "shop_location": shopLocation,
+        "total_amount_without_discount": totalAmountWithoutDiscount,
+        "total_amount_with_discount": totalAmountWithDiscount,
+        "cashback_amount": cashbackAmount,
+        "discount_amount": discountAmount,
+        "paid_by": userId,
+        "discount_percent": discountPercent,
+        "cashback_percent": cashbackPercent,
+        "amount_paid_by_pg": amountPaidByPg,
+        "amount_paid_by_wallet": amountPaidByWallet,
+        "razorpay_payment_id": "",
+        "razorpay_signature": ""
       };
       var response = await _apiServices.postApi(
         data,
