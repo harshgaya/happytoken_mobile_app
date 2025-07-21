@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -6,6 +7,7 @@ import 'package:happy_tokens/helpers/sharedprefs.dart';
 import 'package:happy_tokens/helpers/utils.dart';
 import 'package:happy_tokens/modules/user/models/notification_model.dart';
 import 'package:happy_tokens/modules/user/models/transaction_model.dart';
+import 'package:happy_tokens/modules/user/models/wallet_trans_model.dart';
 import 'package:happy_tokens/modules/user/pages/dashboard.dart';
 import 'package:happy_tokens/modules/user/pages/payment/transactions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,6 +49,11 @@ class UserController extends GetxController {
   RxDouble walletBalance = 0.0.obs;
   RxString orderId = ''.obs;
 
+  RxBool extraDiscountLoading = false.obs;
+  RxInt extraDiscount = 0.obs;
+  RxInt extraCashback = 0.obs;
+  RxBool extraDiscountEnabled = false.obs;
+
   ///payment
 
   ///banners and categories
@@ -68,6 +75,14 @@ class UserController extends GetxController {
   /// shops
 
   ///banners and categories
+  ///reffer
+  RxString referralId = ''.obs;
+  int walletTransactionPage = 0;
+  RxBool loadingWalletTransaction = false.obs;
+  RxList<WalletTransactionData> walletTransactions =
+      <WalletTransactionData>[].obs;
+
+  ///reffer
   Future<void> getBanners() async {
     try {
       bannerLoading.value = true;
@@ -188,12 +203,17 @@ class UserController extends GetxController {
     required String shopId,
     required String shopName,
     required String shopLocation,
+    required dynamic shopCommission,
     required dynamic totalAmountWithoutDiscount,
     required dynamic totalAmountWithDiscount,
     required dynamic cashbackAmount,
     required dynamic discountAmount,
     required dynamic discountPercent,
     required dynamic cashbackPercent,
+    required dynamic extraDiscountAmount,
+    required dynamic extraCashbackAmount,
+    required dynamic extraDiscountPercent,
+    required dynamic extraCashbackPercent,
   }) async {
     try {
       if (paying.value) return;
@@ -213,8 +233,13 @@ class UserController extends GetxController {
         "shop_location": shopLocation,
         "total_amount_without_discount": totalAmountWithoutDiscount,
         "total_amount_with_discount": totalAmountWithDiscount,
+        "shop_commission": shopCommission,
         "cashback_amount": cashbackAmount,
         "discount_amount": discountAmount,
+        "extra_discount_percent": extraDiscountPercent,
+        "extra_cashback_percent": extraCashbackPercent,
+        "extra_discount_amount": extraDiscountAmount,
+        "extra_cashback_amount": extraCashbackAmount,
         "paid_by": userId,
         "discount_percent": discountPercent,
         "cashback_percent": cashbackPercent,
@@ -247,6 +272,7 @@ class UserController extends GetxController {
       required String shopId,
       required String shopName,
       required String shopLocation,
+      required dynamic shopCommission,
       required dynamic totalAmountWithoutDiscount,
       required dynamic totalAmountWithDiscount,
       required dynamic cashbackAmount,
@@ -254,6 +280,10 @@ class UserController extends GetxController {
       required dynamic discountPercent,
       required dynamic cashbackPercent,
       required dynamic amountPaidByPg,
+      required dynamic extraDiscountAmount,
+      required dynamic extraCashbackAmount,
+      required dynamic extraDiscountPercent,
+      required dynamic extraCashbackPercent,
       required dynamic amountPaidByWallet}) async {
     try {
       if (paying.value) return '';
@@ -274,6 +304,11 @@ class UserController extends GetxController {
         "user_mobile": userMobile,
         "user_name": userName,
         "mobile_number": mobileNumber,
+        "shop_commission": shopCommission,
+        "extra_discount_percent": extraDiscountPercent,
+        "extra_cashback_percent": extraCashbackPercent,
+        "extra_discount_amount": extraDiscountAmount,
+        "extra_cashback_amount": extraCashbackAmount,
         "shop_id": shopId,
         "shop_name": shopName,
         "shop_location": shopLocation,
@@ -307,6 +342,7 @@ class UserController extends GetxController {
       required String shopId,
       required String shopName,
       required String shopLocation,
+      required dynamic shopCommission,
       required dynamic totalAmountWithoutDiscount,
       required dynamic totalAmountWithDiscount,
       required dynamic cashbackAmount,
@@ -315,6 +351,10 @@ class UserController extends GetxController {
       required dynamic cashbackPercent,
       required String razorpayOrderId,
       required dynamic amountPaidByPg,
+      required dynamic extraDiscountAmount,
+      required dynamic extraCashbackAmount,
+      required dynamic extraDiscountPercent,
+      required dynamic extraCashbackPercent,
       required dynamic amountPaidByWallet}) async {
     try {
       EasyLoading.show(status: 'Checking payment', dismissOnTap: false);
@@ -331,6 +371,7 @@ class UserController extends GetxController {
         "user_name": userName,
         "shop_id": shopId,
         "shop_name": shopName,
+        "shop_commission": shopCommission,
         "shop_location": shopLocation,
         "total_amount_without_discount": totalAmountWithoutDiscount,
         "total_amount_with_discount": totalAmountWithDiscount,
@@ -339,11 +380,15 @@ class UserController extends GetxController {
         "paid_by": userId,
         "discount_percent": discountPercent,
         "cashback_percent": cashbackPercent,
+        "extra_discount_percent": extraDiscountPercent,
+        "extra_cashback_percent": extraCashbackPercent,
+        "extra_discount_amount": extraDiscountAmount,
+        "extra_cashback_amount": extraCashbackAmount,
         "amount_paid_by_pg": amountPaidByPg,
         "amount_paid_by_wallet": amountPaidByWallet,
         "razorpay_order_id": razorpayOrderId,
         "razorpay_payment_id": "",
-        "razorpay_signature": ""
+        "razorpay_signature": "",
       };
       await _apiServices.postApi(data, UrlConstants.checkPaymentStatus);
       EasyLoading.dismiss();
@@ -370,6 +415,7 @@ class UserController extends GetxController {
       required String shopId,
       required String shopName,
       required String shopLocation,
+      required dynamic shopCommission,
       required dynamic totalAmountWithoutDiscount,
       required dynamic totalAmountWithDiscount,
       required dynamic cashbackAmount,
@@ -399,6 +445,7 @@ class UserController extends GetxController {
         "cashback_amount": cashbackAmount,
         "discount_amount": discountAmount,
         "paid_by": userId,
+        "shop_commission": shopCommission,
         "discount_percent": discountPercent,
         "cashback_percent": cashbackPercent,
         "amount_paid_by_pg": amountPaidByPg,
@@ -480,6 +527,93 @@ class UserController extends GetxController {
       print("Device Token: $token");
     } catch (e) {
       print('unable to update device token');
+    }
+  }
+
+  Future<void> getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      await updateDeviceInfo(
+          model: androidInfo.model,
+          version: androidInfo.version.sdkInt.toString());
+    }
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      await updateDeviceInfo(
+          model: iosInfo.utsname.machine, version: iosInfo.systemVersion);
+    }
+  }
+
+  Future<void> updateDeviceInfo(
+      {required String model, required String version}) async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String? userId = sharedPreferences.getString(SharedPreferenceKey.userId);
+      var data = {
+        "id": userId,
+        "collection": "users",
+        "model": model,
+        "version": version,
+      };
+      var response =
+          await _apiServices.postApi(data, UrlConstants.updateDeviceInfo);
+    } catch (e) {}
+  }
+
+  Future<void> getExtraDiscount({required String shopId}) async {
+    try {
+      extraDiscountLoading.value = true;
+      var response = await _apiServices
+          .getApi('${UrlConstants.getShopExtraDiscount}/$shopId');
+
+      if (response['data'][0]['is_enabled']) {
+        extraDiscountEnabled.value = response['data'][0]['is_enabled'];
+        extraDiscount.value = response['data'][0]['extra_discount'];
+        extraCashback.value = response['data'][0]['extra_cashback'];
+      } else {
+        extraDiscountEnabled.value = false;
+        extraDiscount.value = 0;
+        extraCashback.value = 0;
+      }
+
+      extraDiscountLoading.value = false;
+    } catch (e) {
+      extraDiscountLoading.value = false;
+    }
+  }
+
+  Future<void> getReferralId() async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String? userId = sharedPreferences.getString(SharedPreferenceKey.userId);
+
+      var response =
+          await _apiServices.getApi('${UrlConstants.getReferralId}/$userId');
+      referralId.value = response['data'][0]['referral_code'];
+    } catch (e) {}
+  }
+
+  Future<void> getWalletTransactions() async {
+    try {
+      if (loadingWalletTransaction.value) return;
+      walletTransactionPage++;
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String? userId = sharedPreferences.getString(SharedPreferenceKey.userId);
+
+      loadingWalletTransaction.value = true;
+      var response = await _apiServices.getApi(
+          '${UrlConstants.getUserWalletTransactions}/$userId/$walletTransactionPage');
+      WalletTransactionModel transactionModel =
+          WalletTransactionModel.fromJson(json: response);
+      walletTransactions.addAll(transactionModel.data);
+
+      loadingWalletTransaction.value = false;
+    } catch (e) {
+      loadingWalletTransaction.value = false;
     }
   }
 }

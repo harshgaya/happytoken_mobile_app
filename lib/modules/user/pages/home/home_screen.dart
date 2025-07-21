@@ -1,7 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:happy_tokens/helpers/colors.dart';
 import 'package:happy_tokens/helpers/sharedprefs.dart';
 import 'package:happy_tokens/helpers/utils.dart';
@@ -40,7 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     getUserName();
     fetchApi();
+    userController.getDeviceInfo();
   }
+
+  final upgrader = Upgrader(
+    debugLogging: true,
+    debugDisplayAlways: false,
+    countryCode: 'IN',
+  );
 
   Future<dynamic> fetchApi() async {
     await Future.wait([
@@ -57,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return UpgradeAlert(
+      upgrader: upgrader,
       barrierDismissible: false,
       showIgnore: false,
       showLater: false,
@@ -240,13 +250,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Category',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18,
-                              ),
-                            ),
+                            Text('Category',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
+                                )),
                             const SizedBox(
                               height: 10,
                             ),
@@ -361,15 +369,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Highly Recommended Shops',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18,
-                            ),
-                          ),
+                          Text('Highly Recommended Shops',
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18,
+                              )),
                           const SizedBox(
-                            height: 10,
+                            height: 0,
                           ),
                           ListView.builder(
                               shrinkWrap: true,

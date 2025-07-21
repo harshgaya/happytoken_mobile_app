@@ -31,6 +31,7 @@ class _SearchShopState extends State<SearchShop> {
   void initState() {
     super.initState();
     userController.searchShopList.value = [];
+    userController.searchShopList.value = userController.verifiedShops;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -93,28 +94,31 @@ class _SearchShopState extends State<SearchShop> {
                 ),
               ),
             ),
-            Obx(() => userController.searchShopLoading.value
-                ? const Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : userController.searchShopList.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child: NotFoundSearch(),
-                      )
-                    : Expanded(
-                        child: ListView.builder(
-                            itemCount: userController.searchShopList.length,
-                            itemBuilder: (context, index) {
-                              final item = userController.searchShopList[index];
-                              return SearchTile(
-                               shopData: item,
-                              );
-                            }),
-                      )),
+            Obx(
+              () => userController.searchShopLoading.value
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : userController.searchShopList.isEmpty
+                      ? const Padding(
+                          padding: EdgeInsets.only(top: 20),
+                          child: NotFoundSearch(),
+                        )
+                      : Expanded(
+                          child: ListView.builder(
+                              itemCount: userController.searchShopList.length,
+                              itemBuilder: (context, index) {
+                                final item =
+                                    userController.searchShopList[index];
+                                return SearchTile(
+                                  shopData: item,
+                                );
+                              }),
+                        ),
+            ),
           ],
         ),
       ),

@@ -3,7 +3,9 @@ description: "Rewards Made Simple"
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 42.0.0+42
+#version: 1.0.1+44 --android
+#version: 43.0.1+44 --ios
+version: 43.0.4+47
 
 
 environment:
@@ -55,6 +57,9 @@ dependencies:
   firebase_analytics: ^10.8.9
   connectivity_plus: ^5.0.2
   sentry: ^8.14.1
+  device_info_plus: ^9.1.2
+  cached_network_image: ^3.3.1
+
 
 
 
@@ -71,17 +76,20 @@ flutter_launcher_icons:
   remove_alpha_ios: true
   adaptive_icon_background: "#282974"
   adaptive_icon_foreground: "assets/icons/fore_background_icon.png"
-  image_path: "assets/icons/ht-logo.png"
+  image_path: "assets/icons/logo.png"
 
 flutter_native_splash:
-  color: "#FB5016"
+  color: "#FFFFFF"
   image: assets/icons/splash.png
   android_gravity: center
+
+
   android_12:
     image: assets/icons/splash.png
-    color: "#FB5016"
+    color: "#FFFFFF"
     icon_background_color: null
     web: false
+
 flutter:
 
   uses-material-design: true
@@ -93,3 +101,4 @@ flutter:
     - assets/icons/account/
     - assets/icons/shop_details/
     - assets/icons/payment/
+    - assets/icons/refer/

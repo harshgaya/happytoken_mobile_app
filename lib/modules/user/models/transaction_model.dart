@@ -33,6 +33,7 @@ class TransactionData {
   dynamic amountPaidByWallet;
   dynamic discountPercent;
   dynamic cashbackPercent;
+  dynamic shopCommission;
   String createdAt;
   String paymentStatus;
 
@@ -55,6 +56,7 @@ class TransactionData {
       required this.amountPaidByPg,
       required this.amountPaidByWallet,
       required this.createdAt,
+      required this.shopCommission,
       required this.paymentStatus});
 
   factory TransactionData.fromJson({required Map<String, dynamic> json}) =>
@@ -68,7 +70,7 @@ class TransactionData {
           shopId: json['shop_id'],
           totalAmountWithoutDiscount: json['total_amount_without_discount'],
           totalAmountWithDiscount: json['total_amount_with_discount'],
-          cashbackAmount: json['cashback_amount'],
+          cashbackAmount: json['cashback_amount'].toStringAsFixed(2),
           discountAmount: json['discount_amount'],
           razorpayOrderId: json['razorpay_order_id'],
           razorpayPaymentId: json['razorpay_payment_id'],
@@ -77,5 +79,6 @@ class TransactionData {
           createdAt: json['created_at'],
           paymentStatus: json['payment_status'],
           cashbackPercent: json['cashback_percent'],
+          shopCommission: json['shop_commission'] ?? 0,
           discountPercent: json['discount_percent']);
 }

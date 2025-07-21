@@ -8,6 +8,7 @@ import 'package:happy_tokens/modules/user/pages/help/help.dart';
 import 'package:happy_tokens/modules/user/pages/home/home_screen.dart';
 import 'package:happy_tokens/modules/user/pages/home/pay_bill.dart';
 import 'package:happy_tokens/modules/user/pages/payment/transactions.dart';
+import 'package:happy_tokens/modules/user/pages/search/pages/search_shop.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class Dashboard extends StatefulWidget {
@@ -38,7 +39,8 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         PersistentTabConfig(
-          screen: const PayBill(),
+          // screen: const PayBill(),
+          screen: const SearchShop(),
           item: ItemConfig(
             activeForegroundColor: Colors.white,
             inactiveBackgroundColor: Colors.white,

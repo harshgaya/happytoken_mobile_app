@@ -22,6 +22,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
   final ownerName = TextEditingController();
   final ownerEmail = TextEditingController();
   final tradeName = TextEditingController();
+  final referredBy = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final authController = Get.put(AuthenticationController());
   String? _selectedValue;
@@ -349,6 +350,42 @@ class _ShopInfo1State extends State<ShopInfo1> {
                   ),
                 ),
                 const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Referred By',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                TextFormField(
+                  controller: referredBy,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Color(AppColors.buttonInactiveColor),
+                    hintText: 'Referred By',
+                    hintStyle: TextStyle(
+                      color: Colors.black26,
+                      fontSize: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                  ),
+                ),
+                const SizedBox(
                   height: 80,
                 ),
               ],
@@ -375,6 +412,7 @@ class _ShopInfo1State extends State<ShopInfo1> {
                 authController.categoryId.value = selectCategoryId!;
                 authController.shopOwnerName.value = ownerName.text.trim();
                 authController.showOwnerEmail.value = ownerEmail.text.trim();
+                authController.referredBy.value = referredBy.text.trim();
 
                 Get.to(() => const ShopInfo2());
               }

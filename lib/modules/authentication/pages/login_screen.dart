@@ -7,6 +7,7 @@ import 'package:happy_tokens/modules/authentication/authentication_controller.da
 import 'package:happy_tokens/modules/authentication/pages/otp_screen.dart';
 import 'package:happy_tokens/modules/authentication/pages/shop_login_screen.dart';
 import 'package:happy_tokens/widgets/button_no_radius.dart';
+import 'package:happy_tokens/widgets/happy_tokens_by_adpro.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -52,6 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 50,
               ),
+              const HappyTokensByAdpro(),
               Image.asset(
                 'assets/icons/onboard/login.jpg',
                 height: 400,

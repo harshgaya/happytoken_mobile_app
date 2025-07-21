@@ -26,13 +26,14 @@ class _ShopHomePageState extends State<ShopHomePage> {
   @override
   void initState() {
     getHomePageData();
+    shopController.getDeviceInfo();
     super.initState();
   }
 
   Future<void> getHomePageData() async {
     Future.wait([
-      shopController.getMonthlyTransactions(),
-      shopController.getLifetimeTransactions(),
+      // shopController.getMonthlyTransactions(),
+      // shopController.getLifetimeTransactions(),
       shopController.getTodayTransactions(),
       shopController.updateDeviceToken(),
     ]);
@@ -40,8 +41,8 @@ class _ShopHomePageState extends State<ShopHomePage> {
 
   Future<void> _refreshData() async {
     Future.wait([
-      shopController.getMonthlyTransactions(),
-      shopController.getLifetimeTransactions(),
+      // shopController.getMonthlyTransactions(),
+      // shopController.getLifetimeTransactions(),
       shopController.getTodayTransactions(),
     ]);
   }
@@ -234,28 +235,28 @@ class _ShopHomePageState extends State<ShopHomePage> {
                 ],
               ),
               const SizedBox(
-                height: 255,
+                height: 200,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15),
-                child: StackTile(
-                  text1: "Lifetime Transactions",
-                  text2: '₹${shopController.lifetimeTotalAmount.value}',
-                  text3: '',
-                  text4:
-                      shopController.lifetimeTotalSuccessfulTransaction.value,
-                  text5: 'Successfull',
-                  text6: shopController.lifetimeTotalFailedTransaction.value,
-                  text7: 'Failed',
-                  text8: shopController.lifetimeTotalPendingTransaction.value,
-                  text9: 'Pending',
-                  totalAmountWithDiscount:
-                      '₹${shopController.lifetimeTotalDiscountAmount.value}',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 15, right: 15),
+              //   child: StackTile(
+              //     text1: "Lifetime Transactions",
+              //     text2: '₹${shopController.lifetimeTotalAmount.value}',
+              //     text3: '',
+              //     text4:
+              //         shopController.lifetimeTotalSuccessfulTransaction.value,
+              //     text5: 'Successfull',
+              //     text6: shopController.lifetimeTotalFailedTransaction.value,
+              //     text7: 'Failed',
+              //     text8: shopController.lifetimeTotalPendingTransaction.value,
+              //     text9: 'Pending',
+              //     totalAmountWithDiscount:
+              //         '₹${shopController.lifetimeTotalDiscountAmount.value}',
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 20,
+              // ),
               Padding(
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 child: StackTile(
@@ -295,11 +296,11 @@ class _ShopHomePageState extends State<ShopHomePage> {
               const SizedBox(
                 height: 20,
               ),
-              Obx(() {
-                return TransactionsGraphPage(
-                  monthlyAmounts: shopController.monthlyAmounts.value,
-                );
-              }),
+              // Obx(() {
+              //   return TransactionsGraphPage(
+              //     monthlyAmounts: shopController.monthlyAmounts.value,
+              //   );
+              // }),
             ],
           ),
         ),

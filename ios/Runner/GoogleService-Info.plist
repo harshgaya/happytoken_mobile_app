@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.softplix.happytoken.happyTokens</string>
+	<string>com.softplix.happytoken</string>
 	<key>PROJECT_ID</key>
 	<string>happy-tokens</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1086202798340:ios:e5b8922cf1b8d0c5a03051</string>
+	<string>1:1086202798340:ios:7eec1ca44d149aa2a03051</string>
 </dict>
 </plist>

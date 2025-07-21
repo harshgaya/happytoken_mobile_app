@@ -227,7 +227,7 @@ class _ShopTransactionDetailsState extends State<ShopTransactionDetails> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Shop Discount ${widget.transactionData.discountPercent}%',
+                            'Instant Discount ${widget.transactionData.discountPercent}%',
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.green),
@@ -243,35 +243,35 @@ class _ShopTransactionDetailsState extends State<ShopTransactionDetails> {
                       const SizedBox(
                         height: 8,
                       ),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Convenience Fee',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF616161),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 3,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            '₹0',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF616161),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
+                      // const Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Row(
+                      //       children: [
+                      //         Text(
+                      //           'Convenience Fee',
+                      //           style: TextStyle(
+                      //             fontSize: 14,
+                      //             color: Color(0xFF616161),
+                      //           ),
+                      //         ),
+                      //         SizedBox(
+                      //           width: 3,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     Text(
+                      //       '₹0',
+                      //       style: TextStyle(
+                      //         fontSize: 14,
+                      //         color: Color(0xFF616161),
+                      //       ),
+                      //     )
+                      //   ],
+                      // ),
+                      // const SizedBox(
+                      //   height: 8,
+                      // ),
                       Dash(
                         direction: Axis.horizontal,
                         length: Get.width - 40,
@@ -286,7 +286,7 @@ class _ShopTransactionDetailsState extends State<ShopTransactionDetails> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            'Paid To Shop',
+                            'Paid by Customer',
                             style: TextStyle(),
                           ),
                           Text(

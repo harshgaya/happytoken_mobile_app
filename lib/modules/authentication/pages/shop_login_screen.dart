@@ -7,6 +7,7 @@ import '../../../helpers/utils.dart';
 import '../../../widgets/button_no_radius.dart';
 import 'package:get/get.dart';
 
+import '../../../widgets/happy_tokens_by_adpro.dart';
 import '../authentication_controller.dart';
 
 class ShopLoginScreen extends StatefulWidget {
@@ -45,6 +46,7 @@ class _ShopLoginScreenState extends State<ShopLoginScreen> {
             const SizedBox(
               height: 50,
             ),
+            const HappyTokensByAdpro(),
             Image.asset(
               'assets/icons/onboard/shop_login.jpg',
               height: 400,

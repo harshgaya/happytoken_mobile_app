@@ -7,6 +7,7 @@ import '../../../helpers/colors.dart';
 import '../../../widgets/button_no_radius.dart';
 import 'package:get/get.dart';
 
+import '../../../widgets/happy_tokens_by_adpro.dart';
 import '../authentication_controller.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -90,6 +91,7 @@ class _OtpScreenState extends State<OtpScreen> {
         body: Obx(() => SingleChildScrollView(
               child: Column(
                 children: [
+                  const HappyTokensByAdpro(),
                   Image.asset(
                     'assets/icons/onboard/otp.jpg',
                     height: 300,

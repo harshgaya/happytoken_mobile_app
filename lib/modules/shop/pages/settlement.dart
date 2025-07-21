@@ -17,12 +17,19 @@ class Settlement extends StatefulWidget {
 
 class _SettlementState extends State<Settlement> {
   final shopController = Get.put(ShopController());
+  final scrollController = ScrollController();
 
   @override
   void initState() {
     shopController.settlements.value = [];
     shopController.settlementPage = 0;
     shopController.getSettlements();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 500) {
+        shopController.getSettlements();
+      }
+    });
     super.initState();
   }
 
@@ -31,11 +38,6 @@ class _SettlementState extends State<Settlement> {
     return Scaffold(
       backgroundColor: const Color(0xFFEBE6E6),
       body: Obx(() {
-        if (shopController.loadingSettlements.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
         return Column(
           children: [
             Stack(
@@ -86,6 +88,7 @@ class _SettlementState extends State<Settlement> {
             ),
             Expanded(
               child: ListView.builder(
+                  controller: scrollController,
                   itemCount: shopController.settlements.length,
                   itemBuilder: (context, index) {
                     final item = shopController.settlements[index];
@@ -96,9 +99,14 @@ class _SettlementState extends State<Settlement> {
                       amountPaid: item.totalAmount,
                       totalDiscount: item.totalDiscount,
                       platformFee: item.platformFee,
+                      transactionNumber: item.transactionNo ?? '',
                     );
                   }),
-            )
+            ),
+            if (shopController.loadingSettlements.value)
+              const Center(
+                child: CircularProgressIndicator(),
+              ),
           ],
         );
       }),

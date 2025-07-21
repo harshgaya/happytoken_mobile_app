@@ -8,6 +8,7 @@ class UrlConstants {
   static const sendOtpShop = '${BASE_URL}send-otp-shop';
   static const verifyOtpShop = '${BASE_URL}verify-otp-shop';
   static const addName = '${BASE_URL}addUserName';
+  static const addNameNew = '${BASE_URL}addUserNameNew';
   static const generatePreSignedUrl = '${BASE_URL}admin/generatePresignedUrl';
   static const deleteAccount = '${BASE_URL}delete-account';
 
@@ -35,6 +36,8 @@ class UrlConstants {
   static const getNotification = '${BASE_URL}get-notifications-user';
   static const updateDeviceToken = '${BASE_URL}update-device-token';
   static const markNotificationRead = '${BASE_URL}mark-notification-read';
+  static const updateDeviceInfo = '${BASE_URL}update-device-info';
+  static const getShopExtraDiscount = '${BASE_URL}get-shop-extra-discount';
 
   ///payments
   static const getUserDetails = '${BASE_URL}get-user';
@@ -45,4 +48,9 @@ class UrlConstants {
 
   ///help
   static const getHelp = '${BASE_URL}getHelp';
+
+  ///refer
+  static const getUserWalletTransactions =
+      '${BASE_URL}get-user-wallet-transactions';
+  static const getReferralId = '${BASE_URL}generate-referral';
 }

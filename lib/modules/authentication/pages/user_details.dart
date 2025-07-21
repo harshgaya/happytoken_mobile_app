@@ -18,6 +18,7 @@ class UserDetails extends StatefulWidget {
 class _UserDetailsState extends State<UserDetails> {
   bool buttonActive = false;
   final nameController = TextEditingController();
+  final referredName = TextEditingController();
   final authController = Get.put(AuthenticationController());
   @override
   Widget build(BuildContext context) {
@@ -127,6 +128,43 @@ class _UserDetailsState extends State<UserDetails> {
               ),
             ),
             const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: SizedBox(
+                height: 50,
+                child: TextFormField(
+                  controller: referredName,
+                  decoration: const InputDecoration(
+                    counter: SizedBox(),
+                    filled: true,
+                    fillColor: Color(AppColors.buttonInactiveColor),
+                    hintText: 'Referred By',
+                    prefixIcon: Icon(
+                      Icons.mobile_screen_share,
+                      color: Colors.grey,
+                    ),
+                    hintStyle: TextStyle(
+                      color: Colors.black26,
+                      fontSize: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
               height: 80,
             ),
           ],
@@ -141,7 +179,9 @@ class _UserDetailsState extends State<UserDetails> {
               child: ButtonNoRadius(
                 function: () async {
                   await authController.addName(
-                      name: nameController.text, context: context);
+                      name: nameController.text,
+                      context: context,
+                      referredBy: referredName.text.trim());
                 },
                 text: 'Sign Up Now',
                 active: buttonActive,

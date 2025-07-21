@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../helpers/utils.dart';
 
 class RestaurantOffer extends StatelessWidget {
-  final int restaurantOffer;
+  final dynamic restaurantOffer;
   const RestaurantOffer({super.key, required this.restaurantOffer});
 
   @override

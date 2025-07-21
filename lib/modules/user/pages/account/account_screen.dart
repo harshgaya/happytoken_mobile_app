@@ -4,7 +4,9 @@ import 'package:happy_tokens/modules/authentication/authentication_controller.da
 import 'package:happy_tokens/modules/user/pages/account/about_screen.dart';
 import 'package:happy_tokens/modules/user/pages/account/notifications.dart';
 import 'package:happy_tokens/modules/user/pages/account/privacy_policy.dart';
+import 'package:happy_tokens/modules/user/pages/account/refer_earn.dart';
 import 'package:happy_tokens/modules/user/pages/account/terms_condition.dart';
+import 'package:happy_tokens/modules/user/pages/account/wallet_transactions.dart';
 import 'package:happy_tokens/modules/user/pages/payment/transactions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -101,56 +103,61 @@ class _AccountScreenState extends State<AccountScreen> {
               Positioned(
                 top: 250 - 60,
                 left: (Get.width / 2) - 90,
-                child: Container(
-                  width: 180,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.circular(10),
-                    color: const Color(0xFFE4FFFA),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                          ),
-                          shape: BoxShape.circle,
-                          color: Colors.green,
+                child: InkWell(
+                  onTap: () {
+                    Get.to(() => const WalletTransactions());
+                  },
+                  child: Container(
+                    width: 180,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
                         ),
-                        child: const Icon(
-                          Icons.account_balance_wallet_rounded,
-                          color: Colors.yellow,
-                          size: 20,
-                        ),
-                      ),
-                      const Text(
-                        'Wallet Balance',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      Obx(() => Text(
-                            '₹${userController.walletBalance.value.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                      ],
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFFE4FFFA),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black,
                             ),
-                          ))
-                    ],
+                            shape: BoxShape.circle,
+                            color: Colors.green,
+                          ),
+                          child: const Icon(
+                            Icons.account_balance_wallet_rounded,
+                            color: Colors.yellow,
+                            size: 20,
+                          ),
+                        ),
+                        const Text(
+                          'Wallet Balance',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        Obx(() => Text(
+                              '₹${userController.walletBalance.value.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ))
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -163,6 +170,16 @@ class _AccountScreenState extends State<AccountScreen> {
             padding: const EdgeInsets.only(left: 20),
             child: Column(
               children: [
+                AccountTextIconButtonTile(
+                  title: 'Refer & Earn',
+                  iconPath: 'assets/icons/refer/refer.png',
+                  function: () {
+                    Get.to(() => const ReferEarnPage());
+                  },
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
                 AccountTextIconButtonTile(
                   title: 'Transactions',
                   iconPath: 'assets/icons/account/transaction.png',

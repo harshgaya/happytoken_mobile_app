@@ -43,6 +43,7 @@ class AuthenticationController extends GetxController {
   RxString categoryId = ''.obs;
   RxString shopOwnerName = ''.obs;
   RxString showOwnerEmail = ''.obs;
+  RxString referredBy = ''.obs;
   RxDouble latitude = 0.0.obs;
   RxDouble longitude = 0.0.obs;
   RxString city = ''.obs;
@@ -147,7 +148,7 @@ class AuthenticationController extends GetxController {
           ));
       sessionId.value = response['data'][0]['sessionId'];
       Utils.showSnackBarSuccess(
-          context: context, title: 'OTP sent to your whatsapp successfully.');
+          context: context, title: 'OTP sent successfully.');
     } catch (e) {
       otpSending.value = false;
       print('error $e');
@@ -180,7 +181,7 @@ class AuthenticationController extends GetxController {
           ));
       sessionId.value = response['data'][0]['sessionId'];
       Utils.showSnackBarSuccess(
-          context: context, title: 'OTP sent to your whatsapp successfully.');
+          context: context, title: 'OTP sent successfully.');
     } catch (e) {
       otpSending.value = false;
       print('error $e');
@@ -242,13 +243,19 @@ class AuthenticationController extends GetxController {
   Future<void> addName({
     required String name,
     required BuildContext context,
+    required String referredBy,
   }) async {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
+      var data = {
+        "id": sharedPreferences.getString(SharedPreferenceKey.userId),
+        "name": name,
+        "referred_by": referredBy
+      };
+
       addingName.value = true;
-      var response = await _apiServices.getApi(
-          '${UrlConstants.addName}/${sharedPreferences.getString(SharedPreferenceKey.userId)}/${name}');
+      var response = await _apiServices.postApi(data, UrlConstants.addNameNew);
       addingName.value = false;
       sharedPreferences.setString(SharedPreferenceKey.name, name);
       Get.offAll(() => const UserState());
@@ -478,6 +485,7 @@ class AuthenticationController extends GetxController {
         "shop_name": shopName.value,
         "shop_timings": storeTimings,
         "category_name": categoryName.value,
+        "referred_by": referredBy.value,
         "category_id": categoryId.value,
         "pan_card_number": pancardNumber.value,
         "pan_card_image": uploadedImages["pan_card_image"],

@@ -33,7 +33,7 @@ class StackTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       width: Get.width - 30,
-      height: 290,
+      height: 220,
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -85,21 +85,21 @@ class StackTile extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          const Text(
-            'Total Amount With Discount',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          Text(
-            totalAmountWithDiscount ?? '0',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF00569E),
-              fontSize: 32,
-            ),
-          ),
+          // const Text(
+          //   'Total Amount With Discount',
+          //   style: TextStyle(
+          //     fontWeight: FontWeight.bold,
+          //     fontSize: 16,
+          //   ),
+          // ),
+          // Text(
+          //   totalAmountWithDiscount ?? '0',
+          //   style: const TextStyle(
+          //     fontWeight: FontWeight.bold,
+          //     color: Color(0xFF00569E),
+          //     fontSize: 32,
+          //   ),
+          // ),
           const Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

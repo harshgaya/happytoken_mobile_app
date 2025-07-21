@@ -135,6 +135,8 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                             bool paymentStatus =
                                 await userController.recheckPaymentStatus(
                               context: context,
+                              shopCommission:
+                                  widget.transactionData.shopCommission,
                               shopId: widget.transactionData.shopId,
                               shopName: widget.transactionData.shopName,
                               shopLocation: widget.transactionData.shopLocation,
@@ -394,6 +396,8 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                                   widget.transactionData.amountPaidByPg,
                               amountPaidByWallet:
                                   widget.transactionData.amountPaidByWallet,
+                              shopCommission:
+                                  widget.transactionData.shopCommission,
                             );
                             if (paymentStatus) {
                               setState(() {

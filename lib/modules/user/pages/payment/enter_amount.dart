@@ -211,12 +211,16 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RestaurantOffer(
-                        restaurantOffer: widget.shopData.commission),
+                        restaurantOffer: double.parse(
+                            (widget.shopData.commission +
+                                    widget.shopData.extraDiscount +
+                                    widget.shopData.extraCashback)
+                                .toString())),
                     const SizedBox(
                       height: 10,
                     ),
                     Container(
-                      height: 50,
+                      height: 80,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -226,19 +230,6 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              '₹',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 2,
-                          ),
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -246,6 +237,10 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                                 bottom: 8,
                               ),
                               child: TextFormField(
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 controller: billAmountController,
                                 keyboardType: TextInputType.number,
                                 cursorColor: Colors.black,
@@ -253,6 +248,18 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                                   FilteringTextInputFormatter.digitsOnly,
                                 ],
                                 decoration: const InputDecoration(
+                                    prefix: Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 5, right: 2),
+                                      child: Text(
+                                        '₹',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                     border: InputBorder.none,
                                     hintText: 'Enter Bill Amount',
                                     hintStyle: TextStyle(

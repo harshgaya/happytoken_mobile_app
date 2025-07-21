@@ -19,27 +19,25 @@ import 'package:sentry/sentry.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   if (Platform.isAndroid) {
     if (await Permission.notification.isDenied) {
       await Permission.notification.request();
     }
   }
+
   HttpOverrides.global = MyHttpOverrides();
-  FlutterError.onError = (errorDetails) {
+
+  FlutterError.onError = (FlutterErrorDetails errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  await Sentry.init(
-    (options) {
-      options.dsn =
-          'https://affa3b18d9322d20665a8f103543be4f@o4509121359839232.ingest.us.sentry.io/4509121366458368';
-    },
-    appRunner: () => runApp(const MyApp()),
-  );
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -56,14 +54,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    try {
-      throw Exception("This is a test exception for Sentry");
-    } catch (exception, stackTrace) {
-      Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-    }
+
     _monitorInternet();
   }
 

@@ -35,6 +35,7 @@ class SettlementData {
   String platformFee;
   String createdAt;
   String totalTransactions;
+  String? transactionNo;
 
   SettlementData({
     required this.id,
@@ -44,16 +45,17 @@ class SettlementData {
     required this.platformFee,
     required this.createdAt,
     required this.totalTransactions,
+    required this.transactionNo,
   });
 
   factory SettlementData.fromJson({required Map<String, dynamic> json}) =>
       SettlementData(
-        id: json['_id'],
-        totalAmount: json['totalAmount'].toString(),
-        paidForDate: json['date'].toString(),
-        totalDiscount: json['totalDiscount'].toString(),
-        platformFee: json['platform_fee'].toString(),
-        createdAt: json['created_at'].toString(),
-        totalTransactions: json['total_transactions'].toString(),
-      );
+          id: json['_id'],
+          totalAmount: json['totalAmount'].toString(),
+          paidForDate: json['date'].toString(),
+          totalDiscount: json['totalDiscount'].toString(),
+          platformFee: json['platform_fee'].toString(),
+          createdAt: json['created_at'].toString(),
+          totalTransactions: json['total_transactions'].toString(),
+          transactionNo: json['utr_number'] ?? "");
 }

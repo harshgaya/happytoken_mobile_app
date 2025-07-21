@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../network/network_api_services.dart';
 import '../../user/models/transaction_model.dart';
+import 'dart:io';
 
 class ShopController extends GetxController {
   final _apiServices = NetworkApiServices();
@@ -302,5 +304,37 @@ class ShopController extends GetxController {
     } catch (e) {
       print('unable to update device token');
     }
+  }
+
+  Future<void> getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      await updateDeviceInfo(
+          model: androidInfo.model,
+          version: androidInfo.version.sdkInt.toString());
+    }
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      await updateDeviceInfo(
+          model: iosInfo.utsname.machine, version: iosInfo.systemVersion);
+    }
+  }
+
+  Future<void> updateDeviceInfo(
+      {required String model, required String version}) async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String? userId = sharedPreferences.getString(SharedPreferenceKey.userId);
+      var data = {
+        "id": userId,
+        "collection": "shop",
+        "model": model,
+        "version": version,
+      };
+      var response =
+          await _apiServices.postApi(data, UrlConstants.updateDeviceInfo);
+    } catch (e) {}
   }
 }

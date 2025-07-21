@@ -40,6 +40,8 @@ class ShopData {
   String landmark;
   dynamic discount;
   dynamic cashback;
+  dynamic extraDiscount;
+  dynamic extraCashback;
   Map<String, dynamic>? shopTimings;
   ShopData({
     required this.id,
@@ -67,6 +69,8 @@ class ShopData {
     required this.commission,
     required this.panCardImage,
     required this.shopNo,
+    this.extraDiscount,
+    this.extraCashback,
   });
 
   factory ShopData.fromJson({required Map<String, dynamic> json}) => ShopData(
@@ -95,5 +99,7 @@ class ShopData {
         commission: json['commission'],
         panCardImage: json['pan_card_image'],
         status: json['status'],
+        extraCashback: json['extra_cashback'] ?? 0,
+        extraDiscount: json['extra_discount'] ?? 0,
       );
 }
